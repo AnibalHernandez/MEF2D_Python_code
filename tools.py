@@ -2,31 +2,40 @@ import classes as c
 
 def obtenerDatos(infile, nlines, n, mode, item_list):
     line = infile.readline()
-    if nlines == c.Lines.DOUBLELINE : line = infile.readline()
-
+    if nlines == c.Lines.DOUBLELINE.value : 
+        line = infile.readline()
+        line = infile.readline()
     for i in range(n):
-        if mode == c.Modes.INT_FLOAT:
+        if mode == c.Modes.INT_FLOAT.value:
+            condition = c.Condition()
             line = infile.readline()
             words = []
             for word in line.split():
                 words.append(word)
-            item_list[i].setValues(c.Indicators.NOTHING, c.Indicators.NOTHING, c.Indicators.NOTHING, int(words[0]), c.Indicators.NOTHING, c.Indicators.NOTHING, float(words[1]))
-        if mode == c.Modes.INT_FLOAT_FLOAT:
+            condition.setValues(c.Indicators.NOTHING.value, c.Indicators.NOTHING.value, c.Indicators.NOTHING.value, int(words[0]), c.Indicators.NOTHING.value, c.Indicators.NOTHING.value, float(words[1]))
+            item_list.append(condition) 
+
+        if mode == c.Modes.INT_FLOAT_FLOAT.value:
+            node = c.Node()
             line = infile.readline()
             words = []
             for word in line.split():
                 words.append(word)
-            item_list[i].setValues(int(words[0]),float(words[1]), float(words[2]), c.Indicators.NOTHING, c.Indicators.NOTHING, c.Indicators.NOTHING, c.Indicators.NOTHING)
-        if mode == c.Modes.INT_INT_INT_INT:
+            node.setValues(int(words[0]),float(words[1]), float(words[2]), c.Indicators.NOTHING.value, c.Indicators.NOTHING.value, c.Indicators.NOTHING.value, c.Indicators.NOTHING.value)
+            item_list.append(node)
+
+        if mode == c.Modes.INT_INT_INT_INT.value:
+            element = c.Element()
             line = infile.readline()
             words=[]
             for word in line.split():
                 words.append(word)
-            item_list[i].setValues(int(words[0]), c.Indicators.NOTHING, c.Indicators.NOTHING, int(words[1]), int(words[2]), int(words[3]), c.Indicators.NOTHING)
+            element.setValues(int(words[0]), c.Indicators.NOTHING.value, c.Indicators.NOTHING.value, int(words[1]), int(words[2]), int(words[3]), c.Indicators.NOTHING.value)
+            item_list.append(element)
 
 def correctConditions(n, list, indices):
     for i in range(n):
-        indices = list[i].getNode1()
+        indices.insert(i, list[i].getNode1())
     
     for i in range(n-1):
         pivot = list[i].getNode1()
@@ -70,13 +79,13 @@ def leerMallayCondiciones(m, filename):
     m.createData()
 
     infile.readline()
-    obtenerDatos(infile, c.Lines.SINGLELINE, nnodes, c.Modes.INT_FLOAT_FLOAT, m.getNodes())
-    obtenerDatos(infile,c.Lines.DOUBLELINE, neltos, c.Modes.INT_INT_INT_INT, m.getElements())
-    obtenerDatos(infile, c.Lines.DOUBLELINE, ndirich, c.Modes.INT_FLOAT, m.getDirichlet())
-    obtenerDatos(infile, c.Lines.DOUBLELINE, nneu, c.Modes.INT_FLOAT, m.getNeumann())
+    obtenerDatos(infile, c.Lines.SINGLELINE.value, nnodes, c.Modes.INT_FLOAT_FLOAT.value, m.getNodes())
+    obtenerDatos(infile,c.Lines.DOUBLELINE.value, neltos, c.Modes.INT_INT_INT_INT.value, m.getElements())
+    obtenerDatos(infile, c.Lines.DOUBLELINE.value, ndirich, c.Modes.INT_FLOAT.value, m.getDirichlet())
+    obtenerDatos(infile, c.Lines.DOUBLELINE.value, nneu, c.Modes.INT_FLOAT.value, m.getNeumann())
 
     infile.close()
-    correctConditions(ndirich, m.getDirchlet, m.getDirichletIndices())
+    correctConditions(ndirich, m.getDirichlet(), m.getDirichletIndices())
 
 def findIndex(v , s, arr):
     for i in range(s):
@@ -86,7 +95,7 @@ def findIndex(v , s, arr):
 def writeResults(m, T, filename):
     outputfilename = ''
     dirich_indices = m.getDirichletIndices()
-    dirich = m.getDirchlet()
+    dirich = m.getDirichlet()
 
     outputfilename = addExtension(outputfilename, filename, '.post.res')
     infile = open(outputfilename,"w+")
@@ -96,8 +105,8 @@ def writeResults(m, T, filename):
 
     Tpos = 0
     Dpos = 0
-    n = m.getSize(c.Sizes.NODES)
-    nd = m.getSize(c.Sizes.DIRICHLET)
+    n = m.getSize(c.Sizes.NODES.value)
+    nd = m.getSize(c.Sizes.DIRICHLET.value)
 
     for i in range(n):
         if findIndex( i+1, nd, dirich_indices):

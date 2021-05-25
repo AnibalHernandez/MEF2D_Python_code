@@ -75,6 +75,12 @@ class Item:
 class Node(Item):
     def setValues(self, a, b, c, d, e, f, g):
         self._id = a
+        self._x = b
+        self._y = c
+
+class Element(Item):
+    def setValues(self, a, b, c, d, e, f, g):
+        self._id = a
         self._node1 = d
         self._node2 = e
         self._node3 = f
@@ -89,20 +95,20 @@ class Mesh:
     sizes = []
 
     def setParameters(self, k, Q):
-        self.parameters.insert(Parameters.THERMAL_CONDUCTIVITY,k)
-        self.parameters.insert(Parameters.HEAT_SOURCE,Q)
+        self.parameters.insert(Parameters.THERMAL_CONDUCTIVITY.value,k)
+        self.parameters.insert(Parameters.HEAT_SOURCE.value,Q)
     
     def setSizes(self, nnodes, neltos, ndirich, nneu):
-        self.sizes.insert(Sizes.NODES, nnodes)
-        self.sizes.insert(Sizes.ELEMENTS, neltos)
-        self.sizes.insert(Sizes.DIRICHLET, ndirich)
-        self.sizes.insert(Sizes.NEUMANN, nneu)
+        self.sizes.insert(Sizes.NODES.value, nnodes)
+        self.sizes.insert(Sizes.ELEMENTS.value, neltos)
+        self.sizes.insert(Sizes.DIRICHLET.value, ndirich)
+        self.sizes.insert(Sizes.NEUMANN.value, nneu)
     
     def getSize(self, s):
-        return self.sizes.index(s)
+        return self.sizes[s]
     
     def getParameter(self, p):
-        return self.parameters.index(p)
+        return self.parameters[p]
     
     def createData(self):
         self.node_list = []
@@ -117,7 +123,7 @@ class Mesh:
     def getElements(self):
         return self.element_list
     
-    def getDirichetIndices(self):
+    def getDirichletIndices(self):
         return self.indices_dirich
     
     def getDirichlet(self):
@@ -133,5 +139,5 @@ class Mesh:
         return self.element_list[i]
     
     def getCondition(self, i, type):
-        if type == Sizes.DIRICHLET : return self.dirichlet_list[i]
+        if type == Sizes.DIRICHLET.value : return self.dirichlet_list[i]
         else : return self.neuman_list[i]
